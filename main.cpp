@@ -75,19 +75,19 @@ void circleCimg(CImg<unsigned char>& image, int xc, int yc, int r, const unsigne
 
 int main() {
 
-    CImg<unsigned char> original_image;
-    original_image.load("../test_images/2.jpeg");
+    CImg<unsigned char> image1;
+    image1.load("../test_images/3.jpg");
 
-    CImg<unsigned char> paste_image;
-    paste_image.load("../test_images/1.jpg");
+    CImg<unsigned char> image2;
+    image2.load("../test_images/4.jpg");
 
     ulong average[3] =  {0, 0, 0};
-    ulong c = original_image.height() * original_image.width();
+    ulong c = image1.height() * image1.width();
 
     for (size_t i = 0; i < 3; i++)
-        for (size_t y = 0; y < original_image.height(); y++)
-            for (size_t x = 0; x < original_image.width(); x++)
-                average[i] += original_image(x, y, 0, i);
+        for (size_t y = 0; y < image1.height(); y++)
+            for (size_t x = 0; x < image1.width(); x++)
+                average[i] += image1(x, y, 0, i);
             
     for (size_t i = 0; i < 3; i++)
         average[i] /= c;
@@ -106,48 +106,48 @@ int main() {
     cout << "r " << average[0] << " g " << average[1] << " b " << average[2] << "\n";
     cout << "r " << k[0] << " g " << k[1] << " b " << k[2] << "\n";
     
-    for (size_t y = 0; y < original_image.height(); y++)
+    for (size_t y = 0; y < image1.height(); y++)
     {
-        for (size_t x = 0; x < original_image.width(); x++)
+        for (size_t x = 0; x < image1.width(); x++)
         {
-            double r = static_cast<double>(original_image(x, y, 0, 0)) * k[0];
-            double g = static_cast<double>(original_image(x, y, 0, 1)) * k[1];
-            double b = static_cast<double>(original_image(x, y, 0, 2)) * k[2];
+            double r = static_cast<double>(image1(x, y, 0, 0)) * k[0];
+            double g = static_cast<double>(image1(x, y, 0, 1)) * k[1];
+            double b = static_cast<double>(image1(x, y, 0, 2)) * k[2];
             unsigned char color[] = { 
                 static_cast<unsigned char>(r > 255 ? 255.0 : r),
                 static_cast<unsigned char>(g > 255 ? 255.0 : g),
                 static_cast<unsigned char>(b > 255 ? 255.0 : b)
             };
-            //original_image.draw_point(x, y, color);
+            image1.draw_point(x, y, color);
         }
     }
 
     
-    original_image.save_pnm_p3("output_white_balance.ppm");
-    original_image.display("White balance");
+    image1.save_pnm_p3("output_white_balance.ppm");
+    image1.display("White balance");
     
-    int x0 = original_image.width() / 2 - paste_image.width() / 2;
-    int y0 = original_image.height() / 2 - paste_image.height() / 2;
+    int x0 = image2.width() / 2 - image1.width() / 2;
+    int y0 = image2.height() / 2 - image1.height() / 2;
 
-    for (size_t y = 0; y < paste_image.height(); y++)
+    for (size_t y = 0; y < image1.height(); y++)
     {
-        for (size_t x = 0; x < paste_image.width(); x++)
+        for (size_t x = 0; x < image1.width(); x++)
         {
-            double r = 1 - (1 - static_cast<double>(original_image(x + x0, y + y0, 0, 0)) / 255.0) * (1 - static_cast<double>(paste_image(x, y, 0, 0)) / 255.0);
-            double g = 1 - (1 - static_cast<double>(original_image(x + x0, y + y0, 0, 1)) / 255.0) * (1 - static_cast<double>(paste_image(x, y, 0, 1)) / 255.0);
-            double b = 1 - (1 - static_cast<double>(original_image(x + x0, y + y0, 0, 2)) / 255.0) * (1 - static_cast<double>(paste_image(x, y, 0, 2)) / 255.0);
+            double r = 1 - (1 - static_cast<double>(image2(x + x0, y + y0, 0, 0)) / 255.0) * (1 - static_cast<double>(image1(x, y, 0, 0)) / 255.0);
+            double g = 1 - (1 - static_cast<double>(image2(x + x0, y + y0, 0, 1)) / 255.0) * (1 - static_cast<double>(image1(x, y, 0, 1)) / 255.0);
+            double b = 1 - (1 - static_cast<double>(image2(x + x0, y + y0, 0, 2)) / 255.0) * (1 - static_cast<double>(image1(x, y, 0, 2)) / 255.0);
 
             unsigned char color[] = { 
                 static_cast<unsigned char>(r * 255.0),
                 static_cast<unsigned char>(g * 255.0),
                 static_cast<unsigned char>(b * 255.0)
             };
-            original_image.draw_point(x + x0, y + y0, color);
+            image2.draw_point(x + x0, y + y0, color);
         }
     }
 
-    original_image.save_pnm_p3("output_overlay.ppm");
-    original_image.display("Image overlay");
+    image2.save_pnm_p3("output_overlay.ppm");
+    image2.display("Image overlay");
     
     return 0;    
 }
